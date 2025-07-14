@@ -1,21 +1,27 @@
 const captainModel = require('../models/captain.model');
+const bcrypt = require('bcryptjs');
 
-module.exports.sreateCaptain = async ({
-   firstname,lastname,email,password,
-   color, plate, capacity, vechicleType
+module.exports.createCaptain = async ({
+   firstName,lastName,email,password,
+   color, plate, capacity, vehicleType
 }) => {
-     if(!firstname || !lastname || !email || !password || !color || !plate || !capacity || !vechicleType){
+     if(!firstName || !lastName || !email || !password || !color || !plate || !capacity || !vehicleType){
         throw new Error('All fields are required');
      }
      const captain = captainModel.create({
-        fullname:{
-            firstname,lastname
+        fullName:{
+            firstName,lastName
         },
         email,
         password,
         vehicle:{
-            color,plate,capacity,vechicleType
+            color,plate,capacity,vehicleType
         }
      })
      return captain;
 }
+
+module.exports.hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+};

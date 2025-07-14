@@ -1,34 +1,47 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useNavigate } from'react-router-dom'
+import axios from 'axios'
+import { CaptainDataContext } from '../context/CaptainContext'
 
 const Captainlogin = () => {
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [captainData, setCaptainData] = useState(null)
- 
-  useEffect(() => {
-    if (captainData) {
-      console.log(captainData);
-    }
-  }, [captainData]);
 
-  const submitHandler = (e)=>{
+  const {captain, setCaptain} = React.useContext(CaptainDataContext)
+ 
+  const navigate = useNavigate()
+  
+  
+  
+  const submitHandler = async (e)=>{
      e.preventDefault();
-     setCaptainData({
+    const captain = {
        email:email,
-       password:password
-     })
+       password
+     }
+
+     const response = await axios.post(`${import.meta.env.VITE_API_URL}/captain/login`, captain)
+     if(response.status === 200){
+      const data = response.data
+
+      setCaptain(data.captain)
+      localStorage.setItem('token',data.token)
+      navigate('/captain-home') 
+     } 
+
+
      setEmail('')
      setPassword('')
   
   }
-  
-  
   return (
     <div className='p-7 h-screen flex flex-col justify-between'>
     <div>
     <img className='w-16 mb-10' src="https://ih1.redbubble.net/image.5007880594.5940/st,small,507x507-pad,600x600,f8f8f8.jpg" alt="" />
+   
+   
    <form onSubmit={(e)=>{
        submitHandler(e)
    }}>

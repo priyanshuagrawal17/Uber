@@ -11,7 +11,7 @@ module.exports.registerUser = async (req, res, next) => {
   
     try {
         
-        const { fullname, email, password } = req.body;
+        const { fullName, email, password } = req.body;
 
         const isUserAlreadyExist = await userModel.findOne({email});
         if(isUserAlreadyExist){
@@ -20,8 +20,8 @@ module.exports.registerUser = async (req, res, next) => {
         const hashedPassword = await userService.hashPassword(password);
   
         const user = await userService.createUser({
-            firstname: fullname.firstname,
-            lastname: fullname.lastname,
+            firstName: fullName.firstName,
+            lastName: fullName.lastName,
             email,
             password: hashedPassword
         });
@@ -51,7 +51,7 @@ module.exports.registerUser = async (req, res, next) => {
         return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const isMatch = await userService.comparePassword(password);
+    const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
         return res.status(401).json({ error: 'Invalid email or password' });
@@ -60,12 +60,9 @@ module.exports.registerUser = async (req, res, next) => {
     const token = user.generateAuthToken();
 
     res.cookie('token', token, {
-      
-    })
-
-    res.status(200).json({
-        user,
-        token
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
     res.status(200).json({

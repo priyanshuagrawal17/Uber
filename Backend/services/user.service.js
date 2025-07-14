@@ -1,17 +1,23 @@
 const userModel = require('../models/user.model');
+const bcrypt = require('bcryptjs');
 
-module.exports.cerateUser = async ({
-   firstname, lastname, email, password,
+module.exports.createUser = async ({
+   firstName, lastName, email, password,
 }) => {
-    if (!firstname  || !email || !password) {
+    if (!firstName  || !email || !password) {
         throw new Error('All fields are required');
     }
-    const user = userModel.create({
-        fullname: {
-            firstname, lastname,
+    const user = await userModel.create({
+        fullName: {
+            firstName, lastName,
         },
          email, password
     }) 
 
     return user;
 }
+
+module.exports.hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+};

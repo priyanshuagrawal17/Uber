@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { User } from '../context/UserContext'
 
 const UserLogin = () => {
  const [email, setEmail] = useState('')
  const [password, setPassword] = useState('')
  const [userData, setUserData] = useState({ })
+
+ const navigate = useNavigate()
+ const { user, setUser } = React.useContext(User)
 
  useEffect(() => {
    if (userData) {
@@ -12,12 +17,26 @@ const UserLogin = () => {
    }
  }, [userData]);
  
- const submitHandler = (e)=>{
+ const submitHandler = async (e)=>{
     e.preventDefault();
-    setUserData({
-      email:email,
-      password:password
-    })
+    
+    try {
+      const response = await axios.post(`http://localhost:3000/user/login`, {
+        email: email,
+        password: password
+      })
+      
+      if (response.status === 200) {
+        const data = response.data
+        setUser(data.user)
+        localStorage.setItem('token', data.token)
+        navigate('/home')
+      }
+    } catch (error) {
+      console.error('Login failed:', error)
+      alert('Login failed. Please check your credentials.')
+    }
+    
     setEmail('')
     setPassword('')
  

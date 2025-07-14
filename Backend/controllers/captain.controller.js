@@ -10,7 +10,7 @@ module.exports.registerCaptain = async (req, res, next) => {
   if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
   }  
-  const {fullname, email, password, vehicle} = req.body;
+  const {fullName, email, password, vehicle} = req.body;
 
   const isCaptainAlreadyExist = await captainModel.findOne({email});
   if(isCaptainAlreadyExist){
@@ -19,14 +19,14 @@ module.exports.registerCaptain = async (req, res, next) => {
   const hashedPassword = await captainService.hashPassword(password);
 
   const captain = await captainService.createCaptain({
-      firstname: fullname.firstname,
-      lastname: fullname.lastname,
+      firstName: fullName.firstName,
+      lastName: fullName.lastName,
       email,
       password: hashedPassword,
       color: vehicle.color,
       plate: vehicle.plate,
       capacity: vehicle.capacity,
-      vechicleType: vehicle.vechicleType
+      vehicleType: vehicle.vehicleType
   });
 
   const token  = captain.generateAuthToken();
@@ -59,7 +59,11 @@ module.exports.loginCaptain = async (req, res, next) => {
 
   const token  = captain.generateAuthToken();
 
-  res.cookies('token', token);
+  res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  });
   
   res.status(200).json({
       captain,
@@ -76,7 +80,7 @@ module.exports.logoutCaptain = async (req, res, next) => {
 
     await blacklistTokenModel.create({ token });
     
-    res.cookie('token');
+    res.clearCookie('token');
 
     res.status(200).json({message: 'Logged out successfully'});
 }

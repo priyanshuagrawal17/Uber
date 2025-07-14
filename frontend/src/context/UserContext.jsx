@@ -1,9 +1,8 @@
- import React from 'react'
- 
- export const userDataContext = createContext()
+import { createContext, useState } from "react";
 
+export const User = createContext()
 
- const UserContext = ({children}) => {
+const UserContext = ({children}) => {
    
    const [user, setUser] = useState({
     email: '',
@@ -14,11 +13,9 @@
    })
    
     return (
-     <div>
-        <userDataContext.Povider value={[user, setUser]}>
+        <User.Provider value={{user, setUser}}>
          {children}
-        </userDataContext.Povider>
-      </div>
+        </User.Provider>
    )
  }
  
