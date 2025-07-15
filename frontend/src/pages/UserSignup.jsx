@@ -25,22 +25,28 @@ const UserSignup = () => {
       email: email,
       password: password
     }
-    
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register`, newUser)
-     
-    if (response.status === 200) {
-      const data = response.data
-      setUser(data.user)   
-      localStorage.setItem('token', data.token) 
-      navigate('/home')
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register`, newUser)
+      if (response.status === 200 || response.status === 201) {
+        const data = response.data
+        console.log('data.token:', data.token, typeof data.token)
+        localStorage.setItem('token', String(data.token)) 
+        setUser(data.user)   
+        navigate('/home')
+      }
+    } catch (err) {
+      if (err.response) {
+        console.log('Signup error:', err.response.data)
+        alert('Signup error: ' + (err.response.data.message || JSON.stringify(err.response.data)))
+      } else {
+        console.log('Signup error:', err)
+        alert('Signup error: ' + err.message)
+      }
     }
-
-
     setEmail('')
     setPassword('')
     setFirstName('')
     setLastName('')
-     
   }
     return (
     <div>

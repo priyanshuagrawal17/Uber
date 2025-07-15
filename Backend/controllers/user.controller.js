@@ -26,7 +26,7 @@ module.exports.registerUser = async (req, res, next) => {
             password: hashedPassword
         });
   
-        const token = user.generateAuthToken();
+        const token = await user.generateAuthToken();
   
         res.status(201).json({
             user,
@@ -57,7 +57,7 @@ module.exports.registerUser = async (req, res, next) => {
         return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const token = user.generateAuthToken();
+    const token = await user.generateAuthToken();
 
     res.cookie('token', token, {
         httpOnly: true,

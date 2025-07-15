@@ -47,14 +47,22 @@ const CaptainSignup = () => {
             vehicleType: vehicleType
         }
     }
-
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/register`, captainData)
-
-    if (response.status === 200) {
-      const data = response.data
-      setCaptain(data.captain)
-      localStorage.setItem('token', data.token)
-      navigate('/captain-home')
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/register`, captainData)
+      if (response.status === 200) {
+        const data = response.data
+        setCaptain(data.captain)
+        localStorage.setItem('token', data.token)
+        navigate('/captain-home')
+      }
+    } catch (err) {
+      if (err.response) {
+        console.log('Signup error:', err.response.data)
+        alert('Signup error: ' + (err.response.data.message || JSON.stringify(err.response.data)))
+      } else {
+        console.log('Signup error:', err)
+        alert('Signup error: ' + err.message)
+      }
     }
     setEmail('')
     setPassword('')

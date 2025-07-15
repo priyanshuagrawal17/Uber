@@ -8,7 +8,7 @@ const UserProtectWrapper = ({
 }) => {
     const token = localStorage.getItem('token')
     const navigate = useNavigate()
-    const { user, setUser } = useContext(UserDataContext)
+    const { user, setUser } = useContext(User)
     const [ isLoading, setIsLoading ] = useState(true)
 
     useEffect(() => {
@@ -16,7 +16,11 @@ const UserProtectWrapper = ({
             navigate('/login')
         }
 
-        axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
+        // Debug: Log the token and Authorization header
+        console.log('Token from localStorage:', token)
+        console.log('Authorization header:', `Bearer ${token}`)
+
+        axios.get(`${import.meta.env.VITE_BASE_URL}/user/profile`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
