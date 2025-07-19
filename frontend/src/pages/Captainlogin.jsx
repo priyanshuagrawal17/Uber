@@ -22,18 +22,25 @@ const Captainlogin = () => {
        password
      }
 
-     const response = await axios.post(`${import.meta.env.VITE_API_URL}/captain/login`, captain)
-     if(response.status === 200){
-      const data = response.data
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/login`, captain)
+      if(response.status === 200){
+       const data = response.data
 
-      setCaptain(data.captain)
-      localStorage.setItem('token',data.token)
-      navigate('/captain-home') 
-     } 
+       setCaptain(data.captain)
+       localStorage.setItem('token',data.token)
+       navigate('/captain-home') 
+      } 
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        alert('Login failed: ' + err.response.data.message)
+      } else {
+        alert('Login failed. Please check your credentials.')
+      }
+    }
 
-
-     setEmail('')
-     setPassword('')
+    setEmail('')
+    setPassword('')
   
   }
   return (
