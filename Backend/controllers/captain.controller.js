@@ -74,7 +74,7 @@ module.exports.loginCaptain = async (req, res, next) => {
   });
   
   res.status(200).json({
-      captain,
+      captain: captain.toObject(),
       token
   });
 }

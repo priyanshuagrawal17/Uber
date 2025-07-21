@@ -1,10 +1,10 @@
 import React from 'react'
 
-const LookingforDriver = (props) => {
+const LookingForDriver = (props) => {
   return (
     <div>
             <h5 className='p-3 text-center w-[93%] absolute top-0' onClick={() => {
-                props.setvechicleFound(false)
+                props.setVehicleFound(false)
             }}><i className=" text-3xl ri-arrow-down-wide-line"></i> </h5>
             <h3 className='text-2xl font-semibold mb-3'>Looking for a Driver</h3>
 
@@ -15,20 +15,20 @@ const LookingforDriver = (props) => {
                          <i className="ri-map-pin-user-line"></i>
                         <div>
                             <h3 className='text-lg font-medium'>641, Raj steel works, Ashok Nagar </h3>
-                            <p className='text-sm -mt-1 text-gray'> Friends Colony</p>
+                            <p className='text-sm -mt-1 text-gray'>{props.pickup}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3 border-b-2'>
                     <i className="text-lg ri-map-pin-fill"></i>
                         <div>
                             <h3 className='text-lg font-medium'>641, Raj steel works, Ashok Nagar</h3>
-                            <p className='text-sm -mt-1 text-gray'> Friends Colony</p>
+                            <p className='text-sm -mt-1 text-gray'>{props.destination}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3 '>
                         <i className="ri-wallet-2-line"></i>
                         <div>
-                            <h3 className='text-lg font-medium'>₹193.36</h3>
+                            <h3 className='text-lg font-medium'>₹{props.fare[props.vehicleType]}</h3>
                             <p className='text-sm -mt-1 text-gray'> Cash Mode</p>
                         </div>
                     </div>
@@ -39,4 +39,4 @@ const LookingforDriver = (props) => {
   )
 }
 
-export default LookingforDriver
+export default LookingForDriver

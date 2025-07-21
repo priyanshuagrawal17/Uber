@@ -13,9 +13,11 @@ const UserContext = ({children}) => {
    })
    
     return (
+        <div>
         <User.Provider value={{user, setUser}}>
          {children}
         </User.Provider>
+        </div>
    )
  }
  
