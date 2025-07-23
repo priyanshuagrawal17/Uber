@@ -1,4 +1,3 @@
-// 
 import React, { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CaptainDetails from '../components/CaptainDetails'
@@ -24,6 +23,7 @@ const CaptainHome = () => {
     const { captain } = useContext(CaptainDataContext)
 
     useEffect(() => {
+        if (!captain) return; // Wait until captain is loaded
         socket.emit('join', {
             userId: captain._id,
             userType: 'captain'
@@ -47,14 +47,19 @@ const CaptainHome = () => {
         updateLocation()
 
         // return () => clearInterval(locationInterval)
-    }, [])
+    }, [captain])
 
-    socket.on('new-ride', (data) => {
+    useEffect(() => {
+        socket.on('new-ride', (data) => {
+            setRide(data);
+            setRidePopupPanel(true);
+        });
 
-        setRide(data)
-        setRidePopupPanel(true)
+        return () => {
+            socket.off('new-ride');
+        };
+    }, [socket]);
 
-    })
 
     async function confirmRide() {
 

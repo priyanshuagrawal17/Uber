@@ -21,20 +21,20 @@ const RidePopUp = (props) => {
                          <i className="ri-map-pin-user-line"></i>
                         <div>
                             <h3 className='text-lg font-medium'>641, Raj steel works, Ashok Nagar </h3>
-                            <p className='text-sm -mt-1 text-gray'> Friends Colony</p>
+                            <p className='text-sm -mt-1 text-gray'>{props.ride?.pickup}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3 border-b-2'>
                     <i className="text-lg ri-map-pin-fill"></i>
                         <div>
                             <h3 className='text-lg font-medium'>641, Raj steel works, Ashok Nagar</h3>
-                            <p className='text-sm -mt-1 text-gray'> Friends Colony</p>
+                            <p className='text-sm -mt-1 text-gray'>{props.ride?.destination}</p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3 '>
                         <i className="ri-wallet-2-line"></i>
                         <div>
-                            <h3 className='text-lg font-medium'>₹193.36</h3>
+                            <h3 className='text-lg font-medium'>₹{props.ride?.fair}</h3>
                             <p className='text-sm -mt-1 text-gray'> Cash Mode</p>
                         </div>
                     </div>
@@ -49,7 +49,9 @@ const RidePopUp = (props) => {
                 </div>
 
                 <button onClick={()=>{
-                   props.setConfirmRidePopupPanel(true)
+                   props.confirmRide();
+                   props.setRidePopupPanel(false);
+                   props.setConfirmRidePopupPanel(true);
                 
                 }} className='w-full  bg-green-600 text-white font-semibold p-3 px-8 rounded-lg'>Accept</button>
                 

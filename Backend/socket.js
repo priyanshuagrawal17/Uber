@@ -36,10 +36,11 @@ function initializeSocket(server) {
 
             await captainModel.findByIdAndUpdate(userId, {
                 location: {
-                    ltd: location.ltd,
-                    lng: location.lng
+                    type: 'Point',
+                    coordinates: [location.lng, location.ltd]
                 }
             });
+            console.log(`[Socket] Updated location for captain ${userId} to [${location.lng}, ${location.ltd}]`);
         });
 
         socket.on('disconnect', () => {
@@ -50,7 +51,9 @@ function initializeSocket(server) {
 
 const sendMessageToSocketId = (socketId, messageObject) => {
 
-console.log(messageObject);
+    console.log(`[Socket] Attempting to send message to socketId: ${socketId}`);
+    console.log(`[Socket] Message event: ${messageObject.event}`);
+
 
     if (io) {
         io.to(socketId).emit(messageObject.event, messageObject.data);

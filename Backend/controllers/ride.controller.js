@@ -17,24 +17,39 @@ module.exports.createRide = async (req, res) => {
         const ride = await rideService.createRide({ user: req.user._id, pickup, destination, vehicleType });
         res.status(201).json(ride);
 
-        const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
+        console.log(`[Ride Controller] Ride created for user ${req.user._id}. Pickup: ${pickup}`);
+        const pickupCoordinates = await mapService.getAddressCoordinates(pickup);
+        console.log('[Ride Controller] Pickup coordinates:', pickupCoordinates);
 
 
+        if (!pickupCoordinates) {
+            console.log('[Ride Controller] Could not get pickup coordinates. Aborting search for captains.');
+            return;
+        }
 
-        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
+        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.lat, pickupCoordinates.lng, 2);
+        console.log(`[Ride Controller] Found ${captainsInRadius.length} captains in radius.`);
+
 
         ride.otp = ""
 
         const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
 
-        captainsInRadius.map(captain => {
+        
+        if (captainsInRadius.length > 0) {
+            captainsInRadius.forEach(captain => {
+                console.log(`[Ride Controller] Attempting to send 'new-ride' to captain ${captain._id} with socketId ${captain.socketId}`);
+                if (captain.socketId) {
+                    sendMessageToSocketId(captain.socketId, {
+                        event: 'new-ride',
+                        data: rideWithUser
+                    });
+                } else {
+                    console.log(`[Ride Controller] Captain ${captain._id} has no socketId.`);
+                }
+            });
+        }
 
-            sendMessageToSocketId(captain.socketId, {
-                event: 'new-ride',
-                data: rideWithUser
-            })
-
-        })
 
     } catch (err) {
 
@@ -65,8 +80,7 @@ module.exports.confirmRide = async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
-    const { rideId } = req.body;
+     const { rideId } = req.body;
 
     try {
         const ride = await rideService.confirmRide({ rideId, captain: req.captain });
